@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  web:
+    container_name: links
+    image: links:v1.0
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - ./envs/.env
+    volumes:
+      - .:/app
+      - ./media:/app/media/
+      - web_static_data:/app/static/
+    ports:
+      - 8000:8000
+    depends_on:
+      - links-db
+  links-db:
+    container_name: links_db
+    image: postgres:15-alpine
+    env_file:
+      - ./envs/.db.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    command: >
+      postgres -c "log_statement=all"
+volumes:
+  web_static_data:
+  postgres_data:
