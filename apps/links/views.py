@@ -42,25 +42,30 @@ class VisitedLinkViewSet(viewsets.GenericViewSet):
 
     @action(
         detail=False, methods=('get',), url_path='visited-domains', permission_classes=(IsAuthenticated,),
-        serializer_class=TimeStampSerializer,
     )
     def visited_domains(self, request: Request, **kwargs):
         data = {}
-        serializer = self.get_serializer(
-            data={
-                'from_date': request.query_params.get('from'),
-                'to_date': request.query_params.get('to'),
-            }
-        )
-        response_status = status.HTTP_400_BAD_REQUEST
-        if serializer.is_valid():
-            domains = self.get_queryset().filter(
-                visited_at__range=[serializer.validated_data['from_date'], serializer.validated_data['to_date']]
-            ).distinct('domain').values_list('domain', flat=True)
-            data['domains'] = domains
-            data['status'] = 'ok'
-            response_status = status.HTTP_200_OK
-        else:
-            data['status'] = serializer.errors
+        errors = {}
+        queryset = self.get_queryset()
+        if (from_date := request.query_params.get('from')) is not None:
+            serializer = TimeStampSerializer(data={'date': from_date})
+            if serializer.is_valid():
+                queryset = queryset.filter(visited_at__gte=serializer.validated_data['date'])
+            else:
+                errors['from'] = serializer.errors['date']
 
-        return Response(data=data, status=response_status)
+        if (to_date := request.query_params.get('to')) is not None:
+            serializer = TimeStampSerializer(data={'date': to_date})
+            if serializer.is_valid():
+                queryset = queryset.filter(visited_at__lte=serializer.validated_data['date'])
+            else:
+                errors['to'] = serializer.errors['date']
+
+        if errors:
+            data['status'] = errors
+            return Response(data, status.HTTP_400_BAD_REQUEST)
+
+        data['domains'] = queryset.distinct('domain').values_list('domain', flat=True)
+        data['status'] = 'ok'
+
+        return Response(data, status.HTTP_200_OK)

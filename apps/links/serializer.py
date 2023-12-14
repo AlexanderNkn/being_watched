@@ -19,5 +19,4 @@ class DateTimeFromTimestampField(serializers.IntegerField):
 
 
 class TimeStampSerializer(serializers.Serializer):
-    from_date = DateTimeFromTimestampField()
-    to_date = DateTimeFromTimestampField()
+    date = DateTimeFromTimestampField()
