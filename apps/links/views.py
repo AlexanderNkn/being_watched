@@ -65,7 +65,7 @@ class VisitedLinkViewSet(viewsets.GenericViewSet):
             data['status'] = errors
             return Response(data, status.HTTP_400_BAD_REQUEST)
 
-        data['domains'] = queryset.distinct('domain').values_list('domain', flat=True)
+        data['domains'] = list(queryset.distinct('domain').values_list('domain', flat=True))
         data['status'] = 'ok'
 
         return Response(data, status.HTTP_200_OK)
