@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from .models import VisitedLink
+from ..models import VisitedLink
 
 
 class VisitedLinkTestCase(APITestCase):
@@ -57,17 +57,17 @@ class VisitedLinkTestCase(APITestCase):
               'https://sber.ru',
               'https://sber.ru',
               'https://sber.ru/2',
-            ]	
+           ]
         }
         expected_data = {
            'domains': [
               'ya.ru',
               'sber.ru',
-            ]	
+            ]
         }
         response = self.client.post(self.url_to_create_links, data=initial_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
+
         response = self.client.get(self.url_to_get_domains)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(sorted(response.data['domains']), sorted(expected_data['domains']))
@@ -79,22 +79,22 @@ class VisitedLinkTestCase(APITestCase):
             timezone.now() - timedelta(days=3),
             timezone.now(),
         ]
-        
+
         data = [
             {
                'links': [
                     'https://ya.ru/search/?text=мемы+с+котиками',
-                ]	
+                ]
             },
             {
                 'links': [
                     'https://sber.ru',
-                ]	
+                ]
             },
             {
                 'links': [
                     'https://stackoverflow.com/questions/65724760/how-it-is'
-                ]	
+                ]
             },
         ]
 

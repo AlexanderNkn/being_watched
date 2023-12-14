@@ -1,0 +1,28 @@
+name: visited links workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test_services_in_docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 'Create links env file'
+        run: |
+          echo "${{ secrets.LINKS_ENV }}" > envs/.env
+
+      - name: 'Create links_db env file'
+        run: |
+          echo "${{ secrets.LINKS_DB_ENV }}" > envs/.db.env
+
+      - name: Build the stack
+        run: docker-compose up -d --build
+
+      - name: Run tests for links
+        run: docker-compose up test-web
+

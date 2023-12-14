@@ -2,3 +2,8 @@
 **/*__pycache__
 **/*env
 **/*.vscode
+**/*.devcontainer
+**/*.git
+**/*envs
+**/*media
+**/*static

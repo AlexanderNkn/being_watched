@@ -17,6 +17,16 @@ services:
       - 8000:8000
     depends_on:
       - links-db
+  test-web:
+    container_name: test-links
+    image: test-links:v1.0
+    build:
+      context: .
+      dockerfile: ./apps/links/tests/docker/Dockerfile
+    env_file:
+      - ./envs/.env
+    depends_on:
+      - links-db
   links-db:
     container_name: links_db
     image: postgres:15-alpine
