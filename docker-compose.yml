@@ -33,6 +33,7 @@ services:
     env_file:
       - ./envs/.db.env
     volumes:
+      - ./apps/links/data/links_db.sql:/var/lib/postgresql/demo/links_db.sql:ro
       - postgres_data:/var/lib/postgresql/data/
     ports:
       - 5432:5432

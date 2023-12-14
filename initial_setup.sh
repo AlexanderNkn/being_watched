@@ -14,7 +14,7 @@ ping -c 1 localhost 5432 &> /dev/null
 echo "Links db started"
 
 export PGPASSWORD=1234
-psql -U postgres -h localhost -p 5432 -f apps/links/data/links_db.sql -d links_database
+docker compose exec links-db psql -U postgres -h localhost -p 5432 -f /var/lib/postgresql/demo/links_db.sql -d links_database
 
 # remove containers
 docker compose down
